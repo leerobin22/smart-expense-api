@@ -1,0 +1,29 @@
+{
+  "name": "smart-expense-api",
+  "version": "1.0.0",
+  "description": "AI-powered Smart Expense Backend API",
+  "keywords": [
+    "Smart",
+    "AI",
+    "Expense",
+    "API"
+  ],
+  "homepage": "https://github.com/leerobin22/smart-expense-api#readme",
+  "bugs": {
+    "url": "https://github.com/leerobin22/smart-expense-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leerobin22/smart-expense-api.git"
+  },
+  "license": "ISC",
+  "author": "Robin Lee",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
