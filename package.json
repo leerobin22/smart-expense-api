@@ -20,13 +20,14 @@
   "author": "Robin Lee",
   "type": "module",
   "main": "src/server.js",
-"scripts": {
-  "dev": "nodemon src/server.js",
-  "start": "node src/server.js"
-},
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
+  },
   "dependencies": {
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongoose": "^9.2.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
