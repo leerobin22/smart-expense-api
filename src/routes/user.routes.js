@@ -4,7 +4,7 @@ import { protect } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 router.get("/profile", protect, (req, res) => {
-  res.json({
+  res.status(200).json({
     message: "Success",
     user: req.user,
   });

@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-export const protect = (req, res, next) => {
+export const protect = async (req, res, next) => {
   try {
     let token;
 
@@ -16,7 +17,15 @@ export const protect = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User no longer exists",
+      });
+    };
+
+    req.user = user;
     next();
   } catch (error) {
     return res.status(401).json({
