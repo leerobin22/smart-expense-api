@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     email: {
       type: String,
       required: true,
@@ -13,7 +14,8 @@ const userSchema = new mongoose.Schema({
       required: true,
       minlength: 8,
     },
-  }, {
+  },
+  {
     timestamps: true,
   },
 );
