@@ -2,6 +2,7 @@ import express from "express";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import expenseRoutes from "./routes/expense.routes.js";
 import { logger } from "./middleware/logger.middleware.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -13,6 +14,7 @@ app.use(logger);
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/api", expenseRoutes);
 
 app.use((req, res, next) => {
   res.status(404);
