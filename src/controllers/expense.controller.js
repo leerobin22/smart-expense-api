@@ -56,3 +56,51 @@ export const getExpenses = asyncHandler(async (req, res) => {
     expenses,
   });
 });
+
+export const updateExpense = asyncHandler(async (req, res) => {
+  const { merchant, amount, date, category } = req.body;
+
+  const expense = await Expense.findById(req.params.id);
+
+  if (!expense) {
+    res.status(404);
+    throw new Error("Expense not found");
+  }
+
+  if (expense.userId.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("Not authorized to update this expense");
+  }
+
+  expense.merchant = merchant || expense.merchant;
+  expense.amount = amount || expense.amount;
+  expense.date = date || expense.date;
+  expense.category = category || expense.category;
+
+  const updatedExpense = await expense.save();
+
+  res.status(200).json({
+    message: "Expense updated",
+    expense: updatedExpense,
+  });
+});
+
+export const deleteExpense = asyncHandler(async (req, res) => {
+  const expense = await Expense.findById(req.params.id);
+
+  if (!expense) {
+    res.status(404);
+    throw new Error("Expense not found");
+  }
+
+  if (expense.userId.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("Not authorized to delete this expense");
+  }
+
+  await expense.deleteOne();
+
+  res.status(200).json({
+    message: "Expense deleted",
+  });
+});
