@@ -104,3 +104,40 @@ export const deleteExpense = asyncHandler(async (req, res) => {
     message: "Expense deleted",
   });
 });
+
+export const getExpenseSummary = asyncHandler(async (req, res) => {
+  const totalSpending = await Expense.aggregate([
+    {
+      $match: { userId: req.user._id },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSpent: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  const spendingPerCategory = await Expense.aggregate([
+    {
+      $match: { userId: req.user._id },
+    },
+    {
+      $group: {
+        _id: "$category",
+        totalSpent: { $sum: "$amount" },
+      },
+    },
+    {
+      $sort: { totalSpent: -1 },
+    },
+  ]);
+
+  res.status(200).json({
+    totalSpent: totalSpending[0]?.totalSpent || 0,
+    categories: spendingPerCategory.map((item) => ({
+      category: item._id,
+      total: item.totalSpent,
+    })),
+  });
+});

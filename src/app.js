@@ -14,7 +14,7 @@ app.use(logger);
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
-app.use("/api", expenseRoutes);
+app.use("/api/expenses", expenseRoutes);
 
 app.use((req, res, next) => {
   res.status(404);
