@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { EXPENSE_CATEGORIES } from "../constants/expense.constants.js";
 
 const expenseSchema = new mongoose.Schema(
   {
@@ -24,7 +25,7 @@ const expenseSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["food", "transport", "shopping", "bills", "others"],
+      enum: EXPENSE_CATEGORIES,
     },
   },
   {

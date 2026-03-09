@@ -7,15 +7,17 @@ import {
   updateExpense,
 } from "../controllers/expense.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
+import { expenseInputValidator } from "../validators/expense.validator.js";
+import { validateInput } from "../middleware/validate.middleware.js";
 
 const router = express.Router();
 
 router.get("/", protect, getExpenses);
-router.post("/", protect, createExpense);
+router.post("/", protect, expenseInputValidator, validateInput, createExpense);
 
 router.get("/summary", protect, getExpenseSummary);
 
-router.put("/:id", protect, updateExpense);
+router.put("/:id", protect, expenseInputValidator, validateInput, updateExpense);
 router.delete("/:id", protect, deleteExpense);
 
 export default router;

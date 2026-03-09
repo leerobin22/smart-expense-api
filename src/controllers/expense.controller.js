@@ -1,8 +1,6 @@
 import Expense from "../models/expense.model.js";
 import asyncHandler from "express-async-handler";
 
-const DEFAULT_CATEGORY = ["food", "transport", "shopping", "bills", "others"];
-
 export const createExpense = asyncHandler(async (req, res) => {
   const { merchant, amount, date, category } = req.body;
 
@@ -31,11 +29,6 @@ export const getExpenses = asyncHandler(async (req, res) => {
   };
 
   if (category) {
-    if (DEFAULT_CATEGORY.indexOf(category) === -1) {
-      res.status(400);
-      throw new Error("Category not found!");
-    }
-
     filter.category = category;
   }
 
