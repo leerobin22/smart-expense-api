@@ -203,8 +203,9 @@ GET /api/expenses
 Optional query filters:
 
 ```
-/api/expenses?month=3
+/api/expenses?startDate=2026-03-01&endDate=2026-03-31
 /api/expenses?category=food
+/api/expenses?page=1&limit=10
 ```
 
 ---
