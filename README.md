@@ -104,6 +104,7 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=1d
+OPENAI_API_KEY=your_api_key
 ```
 
 You may also copy the provided `.env.example` file.
