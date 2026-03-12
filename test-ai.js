@@ -1,19 +1,14 @@
-import OpenAI from "openai";
 import dotenv from "dotenv";
+import { extractReceiptData } from "./src/services/ai.service.js";
 
 dotenv.config();
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 async function testAi() {
-  const response = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: "Extract expense information from: Starbucks Latte $5.50",
-  });
+  const result = await extractReceiptData(
+    "Starbucks Latte $5.50"
+  )
 
-  console.log(response.output_text);
+  console.log(result)
 }
 
 testAi();
