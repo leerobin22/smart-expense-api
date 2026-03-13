@@ -1,11 +1,15 @@
 import OpenAI from "openai";
 import { EXPENSE_CATEGORIES } from "../constants/expense.constants.js";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getClient() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 export async function extractReceiptData(receiptText) {
+  const client = getClient();
+
   const prompt = `
     Extract expense information from this receipt text.
 

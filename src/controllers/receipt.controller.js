@@ -1,0 +1,21 @@
+import Expense from "../models/expense.model.js";
+import { extractReceiptData } from "../services/ai.service.js";
+import asyncHandler from "express-async-handler";
+
+export const processReceiptText = asyncHandler(async (req, res, next) => {
+  const { text } = req.body;
+
+  const aiResult = await extractReceiptData(text);
+
+  const expense = await Expense.create({
+    merchant: aiResult.merchant,
+    amount: aiResult.amount,
+    category: aiResult.category,
+    userId: req.user._id,
+  });
+
+  return res.status(201).json({
+    message: "Success!",
+    expense,
+  });
+});
