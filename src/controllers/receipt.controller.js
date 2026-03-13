@@ -11,6 +11,7 @@ export const processReceiptText = asyncHandler(async (req, res, next) => {
     merchant: aiResult.merchant,
     amount: aiResult.amount,
     category: aiResult.category,
+    date: aiResult.date ? new Date(aiResult.date) : new Date(),
     userId: req.user._id,
   });
 

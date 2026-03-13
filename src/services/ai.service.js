@@ -20,7 +20,8 @@ export async function extractReceiptData(receiptText) {
     {
       "merchant": "",
       "amount": number,
-      "category: ${EXPENSE_CATEGORIES.join(" | ")}
+      "category: ${EXPENSE_CATEGORIES.join(" | ")},
+      "date": "YYYY-MM-DD or null if not found"
     }
   `;
 
