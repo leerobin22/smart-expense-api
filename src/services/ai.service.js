@@ -7,22 +7,62 @@ function getClient() {
   });
 }
 
+function cleanAIOutput(output) {
+  return output
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+}
+
+function validateAIOutput(data) {
+  if (!data) {
+    throw new Error("AI returned empty response");
+  }
+
+  if (!data.merchant) {
+    throw new Error("AI failed to extract merchant");
+  }
+
+  if (!data.amount) {
+    throw new Error("AI failed to extract amount");
+  }
+
+  if (!EXPENSE_CATEGORIES.includes(data.category)) {
+    data.category = "others";
+  }
+
+  return data;
+}
+
+/**
+ * Main AI extraction function
+ */
 export async function extractReceiptData(receiptText) {
   const client = getClient();
 
   const prompt = `
-    Extract expense information from this receipt text.
+    You are a financial data extraction assistant.
+
+    Extract expense information from the receipt text below.
 
     Receipt:
     ${receiptText}
 
-    Return ONLY valid json in this format:
+    Return ONLY valid JSON with this schema:
+
     {
-      "merchant": "",
+      "merchant": string,
       "amount": number,
-      "category: ${EXPENSE_CATEGORIES.join(" | ")},
-      "date": "YYYY-MM-DD or null if not found"
+      "category": "food | transport | shopping | bills | others",
+      "date": "YYYY-MM-DD or null"
     }
+
+    Rules:
+    - Do NOT include explanations
+    - Do NOT include markdown
+    - Do NOT include text outside JSON
+    - If date is missing return null
+    - Category must be one of the allowed values
   `;
 
   const response = await client.responses.create({
@@ -30,16 +70,22 @@ export async function extractReceiptData(receiptText) {
     input: prompt,
   });
 
-  const output = response.output_text;
+  const rawOutput = response.output_text;
 
-  const cleaned = output
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
+  if (!rawOutput) {
+    throw new Error("AI returned empty output");
+  }
+
+  const cleaned = cleanAIOutput(rawOutput);
+
+  let parsed;
 
   try {
-    return JSON.parse(cleaned);
+    parsed = JSON.parse(cleaned);
   } catch (error) {
+    console.error("AI RAW OUTPUT:", rawOutput);
     throw new Error("AI returned invalid JSON");
   }
+
+  return validateAIOutput(parsed);
 }
