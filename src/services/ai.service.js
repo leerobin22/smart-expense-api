@@ -65,10 +65,21 @@ export async function extractReceiptData(receiptText) {
     - Category must be one of the allowed values
   `;
 
-  const response = await client.responses.create({
-    model: "gpt-4.1-mini",
-    input: prompt,
-  });
+  let response;
+  try {
+    response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
+    });
+  } catch (error) {
+    console.error("OpenAI API Error:", error.message);
+
+    throw new Error("Failed to process receipt with AI");
+  }
+
+  if (!response || !response.output_text) {
+    throw new Error("AI returned empty response");
+  }
 
   const rawOutput = response.output_text;
 
@@ -83,7 +94,7 @@ export async function extractReceiptData(receiptText) {
   try {
     parsed = JSON.parse(cleaned);
   } catch (error) {
-    console.error("AI RAW OUTPUT:", rawOutput);
+    console.error("Invalid AI JSON:", rawOutput);
     throw new Error("AI returned invalid JSON");
   }
 
