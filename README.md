@@ -34,23 +34,36 @@ src
 │
 ├── controllers
 │     ├── auth.controller.js
-│     └── expense.controller.js
+│     ├── expense.controller.js
+│     ├── health.controller.js
+│     └── receipt.controller.js
 │
 ├── models
-│     ├── user.model.js
-│     └── expense.model.js
+│     ├── expense.model.js
+│     └── user.model.js
 │
 ├── routes
 │     ├── auth.routes.js
-│     └── expense.routes.js
+│     ├── expense.routes.js
+│     ├── health.routes.js
+│     └── user.routes.js
 │
 ├── middleware
 │     ├── auth.middleware.js
+│     ├── error.middleware.js
+│     ├── logger.middleware.js
 │     └── validate.middleware.js
+│
+├── services
+│     ├── auth.service.js
+│     ├── expense.service.js
+│     ├── health.service.js
+│     └── receipt.service.js
 │
 ├── validators
 │     ├── auth.validator.js
-│     └── expense.validator.js
+│     ├── expense.validator.js
+│     └── receipt.validator.js
 │
 ├── config
 │     └── db.js
