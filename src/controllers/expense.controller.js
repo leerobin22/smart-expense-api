@@ -1,48 +1,15 @@
 import Expense from "../models/expense.model.js";
 import asyncHandler from "express-async-handler";
+import {
+  createExpense,
+  deleteExpense,
+  getExpenses,
+  getExpenseSummary,
+  updateExpense,
+} from "../services/expense.service.js";
 
-export const createExpense = asyncHandler(async (req, res) => {
-  const { merchant, amount, date, category } = req.body;
-
-  const expense = await Expense.create({
-    userId: req.user._id,
-    merchant,
-    amount,
-    date,
-    category,
-  });
-
-  res.status(201).json({
-    message: "Expense created",
-    expense,
-  });
-});
-
-export const getExpenses = asyncHandler(async (req, res) => {
-  const { startDate, endDate, category, offset, limit } = req.query;
-
-  const page = parseInt(offset) || 1;
-  const size = parseInt(limit) || 10;
-
-  const filter = {
-    userId: req.user._id,
-  };
-
-  if (category) {
-    filter.category = category;
-  }
-
-  if (startDate && endDate) {
-    filter.date = {
-      $gte: new Date(startDate),
-      $lte: new Date(endDate),
-    };
-  }
-
-  const expenses = await Expense.find(filter)
-    .sort({ date: -1 })
-    .skip((page - 1) * size)
-    .limit(size);
+export const getExpensesController = asyncHandler(async (req, res) => {
+  const expenses = await getExpenses(req.query, req.user._id);
 
   res.status(200).json({
     count: expenses.length,
@@ -50,27 +17,27 @@ export const getExpenses = asyncHandler(async (req, res) => {
   });
 });
 
-export const updateExpense = asyncHandler(async (req, res) => {
-  const { merchant, amount, date, category } = req.body;
+export const getExpenseSummaryController = asyncHandler(async (req, res) => {
+  const expenseSummary = await getExpenseSummary(req.user._id);
 
-  const expense = await Expense.findById(req.params.id);
+  res.status(200).json(expenseSummary);
+});
 
-  if (!expense) {
-    res.status(404);
-    throw new Error("Expense not found");
-  }
+export const createExpenseController = asyncHandler(async (req, res) => {
+  const expense = await createExpense(req.body, req.user._id);
 
-  if (expense.userId.toString() !== req.user._id.toString()) {
-    res.status(403);
-    throw new Error("Not authorized to update this expense");
-  }
+  res.status(201).json({
+    message: "Expense created",
+    expense,
+  });
+});
 
-  expense.merchant = merchant || expense.merchant;
-  expense.amount = amount || expense.amount;
-  expense.date = date || expense.date;
-  expense.category = category || expense.category;
-
-  const updatedExpense = await expense.save();
+export const updateExpenseController = asyncHandler(async (req, res) => {
+  const updatedExpense = await updateExpense(
+    req.params.id,
+    req.body,
+    req.user._id,
+  );
 
   res.status(200).json({
     message: "Expense updated",
@@ -78,59 +45,10 @@ export const updateExpense = asyncHandler(async (req, res) => {
   });
 });
 
-export const deleteExpense = asyncHandler(async (req, res) => {
-  const expense = await Expense.findById(req.params.id);
-
-  if (!expense) {
-    res.status(404);
-    throw new Error("Expense not found");
-  }
-
-  if (expense.userId.toString() !== req.user._id.toString()) {
-    res.status(403);
-    throw new Error("Not authorized to delete this expense");
-  }
-
-  await expense.deleteOne();
+export const deleteExpenseController = asyncHandler(async (req, res) => {
+  await deleteExpense(req.params.id, req.user._id);
 
   res.status(200).json({
     message: "Expense deleted",
-  });
-});
-
-export const getExpenseSummary = asyncHandler(async (req, res) => {
-  const totalSpending = await Expense.aggregate([
-    {
-      $match: { userId: req.user._id },
-    },
-    {
-      $group: {
-        _id: null,
-        totalSpent: { $sum: "$amount" },
-      },
-    },
-  ]);
-
-  const spendingPerCategory = await Expense.aggregate([
-    {
-      $match: { userId: req.user._id },
-    },
-    {
-      $group: {
-        _id: "$category",
-        totalSpent: { $sum: "$amount" },
-      },
-    },
-    {
-      $sort: { totalSpent: -1 },
-    },
-  ]);
-
-  res.status(200).json({
-    totalSpent: totalSpending[0]?.totalSpent || 0,
-    categories: spendingPerCategory.map((item) => ({
-      category: item._id,
-      total: item.totalSpent,
-    })),
   });
 });

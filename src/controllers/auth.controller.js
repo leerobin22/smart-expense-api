@@ -1,24 +1,8 @@
-import bcrypt from "bcrypt";
-import User from "../models/user.model.js";
-import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
+import { loginUser, registerUser } from "../services/auth.service.js";
 
-export const registerUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
-
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  const user = await User.create({
-    email,
-    password: hashedPassword,
-  });
+export const registerUserController = asyncHandler(async (req, res) => {
+  const user = await registerUser(req.body);
 
   res.status(201).json({
     message: "User registered successfully",
@@ -26,24 +10,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 });
 
-export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    res.status(400);
-    throw new Error("Invalid Credentials");
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    res.status(400);
-    throw new Error("Invalid Credentials");
-  }
-
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+export const loginUserController = asyncHandler(async (req, res) => {
+  const token = await loginUser(req.body);
 
   res.status(200).json({
     message: "Login successful",

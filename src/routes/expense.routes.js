@@ -1,39 +1,45 @@
 import express from "express";
 import {
-  createExpense,
-  deleteExpense,
-  getExpenses,
-  getExpenseSummary,
-  updateExpense,
+  createExpenseController,
+  deleteExpenseController,
+  getExpensesController,
+  getExpenseSummaryController,
+  updateExpenseController,
 } from "../controllers/expense.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { expenseInputValidator } from "../validators/expense.validator.js";
 import { validateInput } from "../middleware/validate.middleware.js";
 import { receiptTextInputValidator } from "../validators/receipt.validator.js";
-import { processReceiptText } from "../controllers/receipt.controller.js";
+import { processReceiptTextController } from "../controllers/receipt.controller.js";
 
 const router = express.Router();
 
-router.get("/", protect, getExpenses);
-router.post("/", protect, expenseInputValidator, validateInput, createExpense);
+router.get("/", protect, getExpensesController);
+router.get("/summary", protect, getExpenseSummaryController);
 
-router.get("/summary", protect, getExpenseSummary);
+router.post(
+  "/",
+  protect,
+  expenseInputValidator,
+  validateInput,
+  createExpenseController,
+);
+router.post(
+  "/receipt",
+  protect,
+  receiptTextInputValidator,
+  validateInput,
+  processReceiptTextController,
+);
 
 router.put(
   "/:id",
   protect,
   expenseInputValidator,
   validateInput,
-  updateExpense,
+  updateExpenseController,
 );
-router.delete("/:id", protect, deleteExpense);
 
-router.post(
-  "/receipt",
-  protect,
-  receiptTextInputValidator,
-  validateInput,
-  processReceiptText,
-);
+router.delete("/:id", protect, deleteExpenseController);
 
 export default router;
