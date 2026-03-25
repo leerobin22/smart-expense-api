@@ -1,9 +1,10 @@
 import OpenAI from "openai";
 import { EXPENSE_CATEGORIES } from "../constants/expense.constants.js";
+import { config } from "../config/env.js";
 
 function getClient() {
   return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: config.openaiKey,
   });
 }
 

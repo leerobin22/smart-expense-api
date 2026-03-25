@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import { config } from "../config/env.js";
 
 export async function registerUser(body) {
   const { email, password } = body;
@@ -37,8 +38,8 @@ export async function loginUser(body) {
     throw new Error("Invalid Credentials");
   }
 
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+  const token = jwt.sign({ userId: user._id }, config.jwtSecret, {
+    expiresIn: config.jwtExpiresIn,
   });
 
   return token;
