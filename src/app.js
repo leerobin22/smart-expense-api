@@ -11,6 +11,13 @@ const app = express();
 app.use(express.json());
 app.use(logger);
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Smart Expense API is running",
+    status: "OK"
+  });
+});
+
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
