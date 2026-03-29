@@ -5,8 +5,13 @@ import userRoutes from "./routes/user.routes.js";
 import expenseRoutes from "./routes/expense.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import morgan from "morgan";
+import helmet from "helmet";
+import cors from "cors";
 
 const app = express();
+
+app.use(helmet());
+app.use(cors({ origin: "*" }));
 
 morgan.token("user", (req) => {
   return req.user ? req.user._id : "guest";
