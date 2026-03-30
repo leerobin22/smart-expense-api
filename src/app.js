@@ -7,6 +7,7 @@ import { errorHandler } from "./middleware/error.middleware.js";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -22,6 +23,30 @@ app.use(
     "[:date[iso]] :method :url :status :response-time ms - user::user"
   )
 );
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: "Too many requests, please try again later"
+  }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: "Too many login attempts, try again later"
+  }
+});
+
+app.use("/api", limiter);
+app.use("/auth", authLimiter);
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
